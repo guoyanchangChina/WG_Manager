@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title or '客户端表单' }} - XLY VPN 管理后台{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm ">
+      <div class="card-header justify-content-center d-flex align-items-center ">
+        <h5 class="mb-0">{{ '确认客户端信息' }}</h5>
+      </div>
+       <div class="card-body">
+        <div class="alert alert-info" role="alert">
+             已为你的客户端生成下列配置信息：
+        </div>
+         <ul class="list-group mb-4">
+         <li class="list-group-item"><strong>ID:</strong> {{ client.id }}</li>
+         <li class="list-group-item"><strong>名称：</strong> {{ client.name }}</li>
+         <li class="list-group-item"><strong>客户端标识:</strong> {{ client.feature }}</li>
+         <li class="list-group-item"><strong>IP 地址：</strong> {{ client.ip_address }}</li>
+         </ul>
+
+         <form method="post">
+          <div class="d-flex justify-content-end align-items-center gap-2">
+           <button type="submit" class="btn btn-primary">确认并生成配置</button>
+           <a href="{{ url_for('clients.delete_client_db_entry',client_id=client.id )}}" class="btn btn-primary">放弃</a>
+           </div>
+         </form>
+       </div>
+    </div>
+  </div>   
+{% endblock %}

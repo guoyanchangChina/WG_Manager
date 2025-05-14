@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title or '客户端表单' }} - XLY VPN 管理后台{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm ">
+      <div class="card-header justify-content-center d-flex align-items-center ">
+        <h5 class="mb-0">{{ title or '添加客户端' }}</h5>
+      </div>
+      <div class="card-body">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="mb-3">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+        <form method="POST">
+          {{ form.hidden_tag() }}
+
+          <div class="mb-3">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control", placeholder="请输入自己的名字或者客户的名称，建议使用中文。") }}
+            {% if form.name.errors %}
+              <div class="text-danger small">{{ form.name.errors[0] }}</div>
+            {% endif %}
+          </div>
+          <div class=" d-flex justify-content-end align-items-center gap-2 "> 
+            {{ form.submit(class="btn btn-primary") }}
+            <a href="{{ url_for('clients.list_clients') }}" class="btn btn-primary">返回</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

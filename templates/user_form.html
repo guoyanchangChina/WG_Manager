@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}{{ '编辑用户' if is_edit else '添加用户' }} - XLY VPN{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center mt-4">
+    <div class="card" style="max-width: 600px; width: 100%; background-color: #f8f9fa;">
+        <div class="card-body">
+            <h5 class="card-title text-center">{{ '编辑用户' if is_edit else '添加用户' }}</h5>
+            {%with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show py-2 mb-3 small" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <form method="POST" action="{{ form_action }}">
+                {{ form.hidden_tag() }}
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        {{ form.username.label(class="form-label") }}
+                        {% if form.username.errors %}
+                            <div class="text-danger small text-end">
+                                {{ form.username.errors[0] }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    {{ form.username(class="form-control", placeholder="请输入用户名", readonly=is_edit) }}
+                </div>
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        {{ form.password.label(class="form-label") }}
+                        {% if form.password.errors %}
+                            <div class="text-danger small text-end">
+                                {{ form.password.errors[0] }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    {{ form.password(class="form-control", placeholder=is_edit and '留空则不修改密码' or '请输入密码', autocomplete="off") }}
+                </div>
+
+                {% if not is_edit %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        {{ form.confirm.label(class="form-label mb-0") }}
+                        {% if form.confirm.errors %}
+                            <div class="text-danger small text-end">
+                                {{ form.confirm.errors[0] }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    {{ form.confirm(class="form-control", placeholder="请再次输入密码", autocomplete="off") }}
+                </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        {{ form.department.label(class="form-label") }}
+                        {% if form.department.errors %}
+                            <div class="text-danger small text-end">
+                                {{ form.department.errors[0] }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    {{ form.department(class="form-control", placeholder="请输入部门") }}
+                </div>
+
+                <div class="mb-3">
+                    {{ form.role.label(class="form-label") }}
+                    {{ form.role(class="form-select") }}
+                </div>
+
+                <div class="mb-3 d-flex justify-content-end gap-2">
+                    {%if is_edit%}
+                    <button type="submit" class="btn btn-danger" name="action" value="delete" onclick="return confirm('确定删除该用户吗？')">删除用户</button>
+                    {%endif%}
+                    <button type="submit" class="btn btn-primary" name="action" value="save">{{ '保存修改' if is_edit else '添加用户' }}</button>
+                    <a href="{{ url_for('users.list_users') }}" class="btn btn-primary">返回</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

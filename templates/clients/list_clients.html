@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}客户端列表 - XLY VPN 管理后台{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h5 class="mb-0">客户端列表</h5>
+    <a href="{{ url_for('clients.add_client_step1') }}" class="btn btn-sm btn-primary">添加客户端</a>
+  </div>
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">序号</th>
+          <th scope="col">客户端名称</th>
+          <th scope="col">标识</th>
+          <th scope="col">IP 地址</th>
+          <th scope="col">创建时间</th>
+          <th scope="col">创建人</th>
+          <th scope="col">配置文件</th>
+          <th scope="col">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for client in clients %}
+        <tr>
+          <td>{{ client.id }}</td>
+          <td>{{ client.name }}</td>
+          <td>{{ client.feature }}</td>
+          <td>{{ client.ip_address }}</td>
+          <td>{{ client.created_at }}</td>
+          <td>{{ client.created_by }}</td>
+          <td>
+            <a href="#" class="btn btn-sm btn-outline-success">
+              下载
+            </a>
+          </td>
+          <td>{{ client.created_by }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="6" class="text-center text-muted py-4">暂无客户端数据</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

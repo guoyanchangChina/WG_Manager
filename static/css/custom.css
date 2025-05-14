@@ -1,0 +1,8 @@
+.my-custom-table {
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    border: 1px solid #ccc;
+}
+.my-custom-table thead {
+    background-color: #822 !important;
+    color: white !important;
+}

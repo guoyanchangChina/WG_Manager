@@ -1,0 +1,20 @@
+# Python-related
+*.pyc
+*.pyo
+__pycache__/
+
+# Environment
+.env
+
+# VSCode settings
+.vscode/
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Virtual environment folder
+venv/
+
+#DB used for testting
+instance/
