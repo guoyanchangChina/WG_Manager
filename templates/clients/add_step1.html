@@ -27,7 +27,7 @@
 
           <div class="mb-3">
             {{ form.name.label(class="form-label") }}
-            {{ form.name(class="form-control", placeholder="请输入自己的名字或者客户的名称，建议使用中文。") }}
+            {{ form.name(class="form-control", placeholder="请输入一个客户端名称，建议使用中文。") }}
             {% if form.name.errors %}
               <div class="text-danger small">{{ form.name.errors[0] }}</div>
             {% endif %}

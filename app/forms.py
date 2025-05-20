@@ -47,3 +47,6 @@ class AddClientForm(FlaskForm):
         Length(max=64)],        )
     
     submit = SubmitField('下一步')
+
+class EmptyForm(FlaskForm):
+    pass

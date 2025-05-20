@@ -6,7 +6,7 @@ from flask import g
 from flask_login import current_user
 import traceback
 import subprocess
-
+import os
 def generate_feature():
     return uuid.uuid4().hex[:10]
 
@@ -76,16 +76,20 @@ def generate_keys():
         raise RuntimeError(f"Key generation failed: {e}")
 
 def generate_client_config(client, private_key, public_key):
-    # Placeholder for client config generation logic
-    config_path = f"/path/to/configs/{client['name']}.conf"
-    with open(config_path, 'w') as f:
+    config_dir = os.path.join(os.getcwd(), 'client_configs')
+    os.makedirs(config_dir, exist_ok=True)
+
+    config_path = os.path.join(config_dir, f"{client['feature']}.conf")
+    with open(config_path, 'w',encoding='utf-8') as f:
         f.write(f"Client Name: {client['name']}\n")
+        f.write(f"Client Feature: {client['feature']}\n")
+        f.write(f"Client IP Address: {client['ip_address']}\n")
         f.write(f"Private Key: {private_key}\n")
         f.write(f"Public Key: {public_key}\n")
     return config_path
 
 def add_peer_to_server_config(public_key, ip_address):
-    # Placeholder for adding peer to server config logic
+    print(f"Adding peer to server config: Public Key: {public_key}, IP Address: {ip_address}")
     server_config_path = "/path/to/server/config.conf"
     with open(server_config_path, 'a') as f:
         f.write(f"Peer Public Key: {public_key}\n")

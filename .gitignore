@@ -18,3 +18,9 @@ venv/
 
 #DB used for testting
 instance/
+
+#Testing Data
+client_configs
+
+#Developer files
+dev

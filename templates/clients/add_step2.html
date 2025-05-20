@@ -21,6 +21,7 @@
          </ul>
 
          <form method="post">
+          {{form.hidden_tag() }}
           <div class="d-flex justify-content-end align-items-center gap-2">
            <button type="submit" class="btn btn-primary">确认并生成配置</button>
            <a href="{{ url_for('clients.delete_client_db_entry',client_id=client.id )}}" class="btn btn-primary">放弃</a>
