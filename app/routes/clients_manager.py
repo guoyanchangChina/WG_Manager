@@ -2,8 +2,9 @@ from flask import Blueprint
 from flask import render_template, flash, redirect, url_for, request
 from ..db import get_db
 from ..forms import AddClientForm,EmptyForm
-from ..utils.client_utils import insert_with_retry,generate_keys,generate_client_config,add_peer_to_server_config
+from ..utils.client_utils import insert_with_retry,generate_keys,generate_client_config
 from .main import error
+from ..scripts.add_peer import add_peer
 
 clients_manager_bp = Blueprint('clients', __name__,url_prefix='/clients')
 
@@ -61,7 +62,7 @@ def add_client_step2():
             """, (private_key, public_key, client_id))
             db.commit()
 
-            add_peer_to_server_config(public_key, client['ip_address'])
+            add_peer(public_key, client['ip_address'])
 
             flash("Client fully configured.", "success")
             return redirect(url_for('clieents.add_client_step3',form=form, client_id=client_id))
