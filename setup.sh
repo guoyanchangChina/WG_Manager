@@ -57,6 +57,19 @@ initialize_database() {
     info "初始化数据库..."
     sudo -u www-data $PROJECT_DIR/venv/bin/python "$PROJECT_DIR/init.py"
 }
+
+prepare_socket_dir() {
+    info "准备运行目录 /run/wgmanager ..."
+    if [ ! -d "/run/wgmanager" ]; then
+        mkdir -p /run/wgmanager
+        info "目录 /run/wgmanager 已创建"
+    else
+        info "目录 /run/wgmanager 已存在"
+    fi
+    chown www-data:www-data /run/wgmanager
+    chmod 755 /run/wgmanager
+}
+
 setup_ssh_key() {
     SSH_DIR="/root/.ssh"
     KEY_NAME="id_rsa"
@@ -170,6 +183,7 @@ main() {
     check_github_ssh
     setup_project
     setup_venv
+    prepare_socket_dir
     initialize_database
     setup_systemd
     setup_nginx
