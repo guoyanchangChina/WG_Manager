@@ -117,7 +117,7 @@ def add_peer(public_key, ip_address):
 def generate_client_config(feature, private_key, ip_address):
     SCRIPT_PATH = os.path.join(os.path.dirname(__file__), '../scripts/generate_client_config.py')
     SCRIPT_PATH = os.path.abspath(SCRIPT_PATH)
-    cmd = ['sudo', '/usr/bin/python3', SCRIPT_PATH, feature, private_key, ip_address]
+    cmd = ['sudo', '-n','/usr/bin/python3', SCRIPT_PATH, feature, private_key, ip_address]
 
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode != 0:
