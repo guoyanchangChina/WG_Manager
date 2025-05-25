@@ -55,7 +55,7 @@ setup_venv() {
 
 initialize_database() {
     info "初始化数据库..."
-    sudo -u www-data $PROJECT_DIR/venv/bin/python $PROJECT_DIR init.py
+    sudo -u www-data $PROJECT_DIR/venv/bin/python "$PROJECT_DIR/init.py"
 }
 setup_ssh_key() {
     SSH_DIR="/root/.ssh"
