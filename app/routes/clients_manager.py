@@ -106,15 +106,18 @@ def delete_client_db_entry():
     return redirect(url_for('clients.list_clients'))
 
 def add_peer(public_key, ip_address):
-    cmd = ['sudo', '/usr/bin/python3', '/opt/wgmanager/app/scripts/add_peer.py', public_key, ip_address]
+    SCRIPT_PATH = os.path.join(os.path.dirname(__file__), '../scripts/add_peer.py')
+    SCRIPT_PATH = os.path.abspath(SCRIPT_PATH)
+    cmd = ['sudo', '/usr/bin/python3', SCRIPT_PATH,public_key, ip_address]
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode != 0:
         raise RuntimeError(f"Failed to add peer: {result.stderr}")
     return result.stdout
 
 def generate_client_config(feature, private_key, ip_address):
-
-    cmd = ['sudo', '/usr/bin/python3', '/scripts/generate_client_config.py', feature, private_key, ip_address]
+    SCRIPT_PATH = os.path.join(os.path.dirname(__file__), '../scripts/generate_client_config.py')
+    SCRIPT_PATH = os.path.abspath(SCRIPT_PATH)
+    cmd = ['sudo', '/usr/bin/python3', SCRIPT_PATH, feature, private_key, ip_address]
 
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode != 0:
