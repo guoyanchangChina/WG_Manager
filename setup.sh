@@ -53,6 +53,10 @@ setup_venv() {
     sudo -u www-data venv/bin/pip install -r "$PROJECT_DIR/requirements.txt"
 }
 
+initialize_database() {
+    info "初始化数据库..."
+    sudo -u www-data $PROJECT_DIR/venv/bin/python $PROJECT_DIR init.py
+}
 setup_ssh_key() {
     SSH_DIR="/root/.ssh"
     KEY_NAME="id_rsa"
@@ -166,6 +170,7 @@ main() {
     check_github_ssh
     setup_project
     setup_venv
+    initialize_database
     setup_systemd
     setup_nginx
     info "🎉 WGManager 安装完成！"   
