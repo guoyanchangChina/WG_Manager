@@ -94,7 +94,7 @@ def delete_client_db_entry():
     return redirect(url_for('clients.list_clients'))
 
 def add_peer(public_key, ip_address):
-    cmd = ['sudo', '/usr/bin/python3', '/opt/wgmanager/scripts/add_peer.py', public_key, ip_address]
+    cmd = ['sudo', '/usr/bin/python3', '/opt/wgmanager/app/scripts/add_peer.py', public_key, ip_address]
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode != 0:
         raise RuntimeError(f"Failed to add peer: {result.stderr}")
