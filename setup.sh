@@ -109,6 +109,28 @@ check_github_ssh() {
     fi
 }
 
+create_env_file() {
+    ENV_FILE="$PROJECT_DIR/.env"
+
+    if [ -f "$ENV_FILE" ]; then
+        info ".env 文件已存在，跳过创建"
+        return
+    fi
+
+    info "创建默认 .env 文件..."
+
+    cat > "$ENV_FILE" <<EOF
+# 环境变量配置
+SERVER_PUBLIC_KEY=your_server_public_key_here
+SERVER_ENDPOINT=your_server_ip_or_domain:51820
+CONFIG_OUTPUT_DIR=$PROJECT_DIR/client-configs
+EOF
+
+    chown www-data:www-data "$ENV_FILE"
+
+    info ".env 文件已创建于 $ENV_FILE."
+}
+
 setup_nginx() {
     info "配置 Nginx 反向代理..."
     cat > "$NGINX_CONF" <<EOF
@@ -171,6 +193,7 @@ main() {
     setup_ssh_key
     check_github_ssh
     setup_project
+    create_env_file
     setup_venv
     initialize_database
     setup_systemd
