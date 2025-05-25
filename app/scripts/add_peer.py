@@ -3,7 +3,6 @@ import os
 
 def add_peer(public_key, ip_address):
     server_config_path = "/etc/wireguard/wg0.conf"
-
     if os.geteuid() != 0:
         print("This script must be run as root.", file=sys.stderr)
         sys.exit(1)
