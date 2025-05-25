@@ -106,9 +106,10 @@ def delete_client_db_entry():
     return redirect(url_for('clients.list_clients'))
 
 def add_peer(public_key, ip_address):
-    flash(f"{sys.executable}", "info")
     SCRIPT_PATH = os.path.join(os.path.dirname(__file__), '../app/scripts/add_peer.py')
     SCRIPT_PATH = os.path.abspath(SCRIPT_PATH)
+    flash(f"{sys.executable}{SCRIPT_PATH}", "info")
+
     cmd = ['sudo','-n','/opt/wgmanager/venv/bin/python3', SCRIPT_PATH,public_key, ip_address]
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode != 0:
@@ -116,9 +117,9 @@ def add_peer(public_key, ip_address):
     return result.stdout
 
 def generate_client_config(feature, private_key, ip_address):
-    flash(f"{sys.executable}", "info")
     SCRIPT_PATH = os.path.join(os.path.dirname(__file__), '../app/scripts/generate_client_config.py')
     SCRIPT_PATH = os.path.abspath(SCRIPT_PATH)
+    flash(f"{sys.executable}{SCRIPT_PATH}", "info")
     cmd = ['sudo','-n','/opt/wgmanager/venv/bin/python3', SCRIPT_PATH, feature, private_key, ip_address]
 
     result = subprocess.run(cmd, capture_output=True, text=True)
