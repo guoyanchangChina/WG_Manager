@@ -60,9 +60,6 @@ initialize_database() {
     sudo -u www-data $PROJECT_DIR/venv/bin/python "$PROJECT_DIR/init.py"
 }
 
-
-
-
 create_env_file() {
     ENV_FILE="$PROJECT_DIR/.env"
     if [ -f "$ENV_FILE" ]; then
@@ -112,14 +109,8 @@ EOF
 
 setup_sudoers() {
     info "配置 sudo 权限，允许 www-data 无密码运行 script..."
-    
-    if [ ! -d "$SCRIPTS_DIR" ]; then
-        mkdir -p "$SCRIPTS_DIR"
-        chown root:root "$SCRIPTS_DIR"
-        chmod 750 "$SCRIPTS_DIR"
-    fi
 
-    echo "www-data ALL=(ALL) NOPASSWD: /usr/bin/python3 $SCRIPTS_DIR/*" > "$SUDOERS_FILE"
+    echo "www-data ALL=(ALL) NOPASSWD: /opt/wgmanager/venv/bin/python $SCRIPTS_DIR*" > "$SUDOERS_FILE"
     chmod 440 "$SUDOERS_FILE"
     info "sudoers 配置已写入 $SUDOERS_FILE"
 }
