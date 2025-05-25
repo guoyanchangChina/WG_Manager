@@ -7,6 +7,8 @@ APP_NAME="wgmanager"
 NGINX_CONF="/etc/nginx/sites-available/wgmanager"
 NGINX_LINK="/etc/nginx/sites-enabled/wgmanager"
 SOCK_PATH="/run/wgmanager/wgmanager.sock"
+SUDOERS_FILE="/etc/sudoers.d/wgmanager"
+SCRIPTS_DIR="$PROJECT_DIR/scripts"
 
 info() {
     echo "[INFO] $1"
@@ -58,60 +60,11 @@ initialize_database() {
     sudo -u www-data $PROJECT_DIR/venv/bin/python "$PROJECT_DIR/init.py"
 }
 
-setup_ssh_key() {
-    SSH_DIR="/root/.ssh"
-    KEY_NAME="id_rsa"
-    PUB_KEY_PATH="$SSH_DIR/id_rsa.pub"
-    PRIV_KEY_PATH="$SSH_DIR/id_rsa"
 
-    info "配置 SSH 密钥..."
 
-    if [ ! -d "$SSH_DIR" ]; then
-        mkdir -p "$SSH_DIR"
-        chmod 700 "$SSH_DIR"
-    fi
-
-    if [ -f "$PUB_KEY_PATH" ]; then
-        info "SSH 密钥已存在，跳过生成步骤"
-        return 0
-    fi
-
-    # 生成密钥
-    ssh-keygen -t rsa -b 4096 -N "" -C "auto-deploy@wgmanager" -f "$SSH_DIR/$KEY_NAME"
-
-    # 设置权限
-    chmod 600 "$PRIV_KEY_PATH"
-    chmod 644 "$PUB_KEY_PATH"
-
-    # 输出公钥内容
-    info "已生成公钥："
-    cat "$PUB_KEY_PATH"
-
-    info "请访问以下链接添加 SSH 密钥到 GitHub"
-    info "https://github.com/settings/keys "
-
-    # 等待用户完成操作
-    read -p $'\n✅ 公钥已生成，请登录 GitHub 添加密钥后按 [Enter] 继续...'
-
-    info "继续执行安装流程..."
-}
-
-check_github_ssh() {
-    info "测试 GitHub SSH 连接..."
-
-    ssh -T git@github.com 2>&1 | grep -q "successfully authenticated"
-    
-    if [ $? -eq 0 ]; then
-        info "GitHub SSH 认证成功"
-    else
-        echo "[ERROR] GitHub SSH 认证失败，请确认公钥已正确添加"
-        exit 1
-    fi
-}
 
 create_env_file() {
     ENV_FILE="$PROJECT_DIR/.env"
-
     if [ -f "$ENV_FILE" ]; then
         info ".env 文件已存在，跳过创建"
         return
@@ -127,7 +80,6 @@ CONFIG_OUTPUT_DIR=$PROJECT_DIR/client-configs
 EOF
 
     chown www-data:www-data "$ENV_FILE"
-
     info ".env 文件已创建于 $ENV_FILE."
 }
 
@@ -154,14 +106,25 @@ server {
 EOF
 
     ln -sf "$NGINX_CONF" "$NGINX_LINK"
-
     nginx -t && systemctl reload nginx
     info "✅ Nginx 配置完成，服务已重新加载"
 }
 
+setup_sudoers() {
+    info "配置 sudo 权限，允许 www-data 无密码运行 script..."
+    if [ ! -d "$SCRIPTS_DIR" ]; then
+        mkdir -p "$SCRIPTS_DIR"
+        chown root:root "$SCRIPTS_DIR"
+        chmod 750 "$SCRIPTS_DIR"
+    fi
+
+    echo "www-data ALL=(ALL) NOPASSWD: /usr/bin/python3 $SCRIPTS_DIR/*" > "$SUDOERS_FILE"
+    chmod 440 "$SUDOERS_FILE"
+    info "sudoers 配置已写入 $SUDOERS_FILE"
+}
+
 setup_systemd() {
     info "注册系统服务..."
-
     cat > /etc/systemd/system/wgmanager.service <<EOF
 [Unit]
 Description=WG Manager - WireGuard Configuration Management Tool
@@ -190,12 +153,11 @@ main() {
     check_root
     install_dependencies
     create_service_user
-    setup_ssh_key
-    check_github_ssh
     setup_project
     create_env_file
     setup_venv
     initialize_database
+    setup_sudoers
     setup_systemd
     setup_nginx
     info "🎉 WGManager 安装完成！"   
