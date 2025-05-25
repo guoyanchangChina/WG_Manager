@@ -88,13 +88,6 @@ def generate_client_config(client, private_key, public_key):
         f.write(f"Public Key: {public_key}\n")
     return config_path
 
-def add_peer_to_server_config(public_key, ip_address):
-    print(f"Adding peer to server config: Public Key: {public_key}, IP Address: {ip_address}")
-    server_config_path = "/path/to/server/config.conf"
-    with open(server_config_path, 'a') as f:
-        f.write(f"Peer Public Key: {public_key}\n")
-        f.write(f"Peer IP Address: {ip_address}\n")
-
 def delete_client(client_id):
     db = get_db()
     cursor = db.cursor()
