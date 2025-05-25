@@ -171,9 +171,9 @@ After=network.target
 User=www-data
 Group=www-data
 WorkingDirectory=$PROJECT_DIR
-Environment="PATH=$PROJECT_DIR/venv/bin"
-RuntimeDirectory=wgmanager
 Environment="PATH=$PROJECT_DIR/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+RuntimeDirectory=wgmanager
+ExecStart=$PROJECT_DIR/venv/bin/gunicorn --workers 1 --bind unix:$SOCK_PATH wsgi:app
 Restart=always
 RestartSec=3
 
