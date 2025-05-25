@@ -145,7 +145,7 @@ User=www-data
 Group=www-data
 WorkingDirectory=$PROJECT_DIR
 Environment="PATH=$PROJECT_DIR/venv/bin"
-ExecStart=$PROJECT_DIR/venv/bin/gunicorn --workers 1 --bind unix:$SOCK_PATH ${APP_NAME}.app:app
+ExecStart=$PROJECT_DIR/venv/bin/gunicorn --workers 1 --bind unix:$SOCK_PATH wsgi:app
 Restart=always
 RestartSec=3
 
