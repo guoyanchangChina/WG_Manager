@@ -50,7 +50,7 @@ setup_venv() {
     info "配置 Python 虚拟环境..."
     cd "$PROJECT_DIR"
     sudo -u www-data python3 -m venv venv
-    sudo -u www-data venv/bin/pip install -r "$PROJECT_DIR/requirements.txt"
+    sudo -u www-data -H "$PROJECT_DIR/venv/bin/pip" install --no-cache-dir -r "$PROJECT_DIR/requirements.txt"
 }
 
 initialize_database() {
