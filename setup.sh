@@ -22,7 +22,7 @@ check_root() {
 install_dependencies() {
     info "安装环境依赖..."
     apt update
-    apt install -y git python3 python3-pip nginx wireguard gunicorn3
+    apt install -y git python3 python3-pip python3-venv nginx wireguard gunicorn3
 }
 
 create_service_user() {
@@ -106,11 +106,10 @@ check_github_ssh() {
 
 setup_nginx() {
     info "配置 Nginx 反向代理..."
-
     cat > "$NGINX_CONF" <<EOF
 server {
     listen 80;
-    server_name $NGINX_SERVER_NAME;
+    server_name _;
 
     location / {
         proxy_pass http://unix:$SOCK_PATH:/;
