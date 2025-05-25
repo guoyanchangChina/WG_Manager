@@ -26,4 +26,4 @@ def create_admin_user(username, password, department='IT'):
             print(f"❌ User '{username}' already exists.")
 
 if __name__ == '__main__':
-    create_admin_user('admin', '000000', '电气工程部')
+    create_admin_user('admin', '000000', '电气')
