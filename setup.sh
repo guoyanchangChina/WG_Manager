@@ -8,7 +8,7 @@ NGINX_CONF="/etc/nginx/sites-available/wgmanager"
 NGINX_LINK="/etc/nginx/sites-enabled/wgmanager"
 SOCK_PATH="/run/wgmanager/wgmanager.sock"
 SUDOERS_FILE="/etc/sudoers.d/wgmanager"
-SCRIPTS_DIR="$PROJECT_DIR/scripts"
+SCRIPTS_DIR="$PROJECT_DIR/app/scripts"
 
 info() {
     echo "[INFO] $1"
@@ -112,6 +112,7 @@ EOF
 
 setup_sudoers() {
     info "配置 sudo 权限，允许 www-data 无密码运行 script..."
+    
     if [ ! -d "$SCRIPTS_DIR" ]; then
         mkdir -p "$SCRIPTS_DIR"
         chown root:root "$SCRIPTS_DIR"
