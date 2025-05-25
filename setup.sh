@@ -6,7 +6,7 @@ PROJECT_DIR="/opt/wgmanager"
 APP_NAME="wgmanager"
 NGINX_CONF="/etc/nginx/sites-available/wgmanager"
 NGINX_LINK="/etc/nginx/sites-enabled/wgmanager"
-SOCK_PATH="/run/wgmanager.sock"
+SOCK_PATH="/run/wgmanager/wgmanager.sock"
 
 info() {
     echo "[INFO] $1"
@@ -56,18 +56,6 @@ setup_venv() {
 initialize_database() {
     info "初始化数据库..."
     sudo -u www-data $PROJECT_DIR/venv/bin/python "$PROJECT_DIR/init.py"
-}
-
-prepare_socket_dir() {
-    info "准备运行目录 /run/wgmanager ..."
-    if [ ! -d "/run/wgmanager" ]; then
-        mkdir -p /run/wgmanager
-        info "目录 /run/wgmanager 已创建"
-    else
-        info "目录 /run/wgmanager 已存在"
-    fi
-    chown www-data:www-data /run/wgmanager
-    chmod 755 /run/wgmanager
 }
 
 setup_ssh_key() {
@@ -129,7 +117,7 @@ server {
     server_name _;
 
     location / {
-        proxy_pass http://unix:$SOCK_PATH:/;
+        proxy_pass http://unix:$SOCK_PATH;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
@@ -162,6 +150,7 @@ User=www-data
 Group=www-data
 WorkingDirectory=$PROJECT_DIR
 Environment="PATH=$PROJECT_DIR/venv/bin"
+RuntimeDirectory=wgmanager
 ExecStart=$PROJECT_DIR/venv/bin/gunicorn --workers 1 --bind unix:$SOCK_PATH wsgi:app
 Restart=always
 RestartSec=3
@@ -183,7 +172,6 @@ main() {
     check_github_ssh
     setup_project
     setup_venv
-    prepare_socket_dir
     initialize_database
     setup_systemd
     setup_nginx
