@@ -5,6 +5,7 @@ from ..forms import AddClientForm,EmptyForm
 from ..utils.client_utils import insert_with_retry,generate_keys,generate_client_config
 from .main import error
 from ..scripts.add_peer import add_peer
+import subprocess
 
 clients_manager_bp = Blueprint('clients', __name__,url_prefix='/clients')
 
@@ -61,7 +62,7 @@ def add_client_step2():
                 UPDATE clients SET private_key = ?, public_key = ? WHERE id = ?
             """, (private_key, public_key, client_id))
             db.commit()
-
+            flash(f"Before add peer", "danger")
             add_peer(public_key, client['ip_address'])
 
             flash("Client fully configured.", "success")
@@ -91,3 +92,10 @@ def delete_client_db_entry():
         db.rollback()
         print(f"删除客户端 ID {client_id} 时出错: {str(e)}")
     return redirect(url_for('clients.list_clients'))
+
+def add_peer(public_key, ip_address):
+    cmd = ['sudo', '/usr/bin/python3', '/opt/wgmanager/scripts/add_peer.py', public_key, ip_address]
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    if result.returncode != 0:
+        raise RuntimeError(f"Failed to add peer: {result.stderr}")
+    return result.stdout
