@@ -66,7 +66,13 @@ def add_client_step2():
             private_key = keys['private_key']
             public_key = keys['public_key']
             feature = client['feature']
-            generate_client_config(feature, private_key, public_key)
+            ip_address= client['ip_address']
+            SCRIPT_PATH = os.path.join(os.path.dirname(__file__), '../scripts/generate_client_config.py')
+            SCRIPT_PATH = os.path.abspath(SCRIPT_PATH)
+            cmd = ['sudo','-n','/opt/wgmanager/venv/bin/python3', SCRIPT_PATH, feature, private_key, ip_address]
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            if result.returncode != 0:
+              raise RuntimeError(f"Generate config failed: {result.stderr.strip()}")
             cursor.execute("""
                 UPDATE clients SET private_key = ?, public_key = ? WHERE id = ?
             """, (private_key, public_key, client_id))
@@ -110,12 +116,6 @@ def add_peer(public_key, ip_address):
         raise RuntimeError(f"Failed to add peer: {result.stderr}")
     return result.stdout
 
-def generate_client_config(feature, private_key, ip_address):
-    SCRIPT_PATH = os.path.join(os.path.dirname(__file__), '../scripts/generate_client_config.py')
-    SCRIPT_PATH = os.path.abspath(SCRIPT_PATH)
-    cmd = ['sudo','-n','/opt/wgmanager/venv/bin/python3', SCRIPT_PATH, feature, private_key, ip_address]
 
-    result = subprocess.run(cmd, capture_output=True, text=True)
-    if result.returncode != 0:
-        raise RuntimeError(f"Generate config failed: {result.stderr.strip()}")
+    
     
