@@ -66,19 +66,13 @@ def add_client_step2():
             private_key = keys['private_key']
             public_key = keys['public_key']
             feature = client['feature']
-            print("Before generate client config")
-            config_path = generate_client_config(feature, private_key, public_key)
-            print(f"config_path: {config_path}")
+            generate_client_config(feature, private_key, public_key)
             cursor.execute("""
                 UPDATE clients SET private_key = ?, public_key = ? WHERE id = ?
             """, (private_key, public_key, client_id))
             db.commit()
-            flash(f"Before add peer", "danger")
-            print("Before add peer")
             add_peer(public_key, client['ip_address'])
-
-            flash("Client fully configured.", "success")
-            return redirect(url_for('clieents.add_client_step3',form=form, client_id=client_id))
+            return redirect(url_for('clients.add_client_step3',form=form, client_id=client_id))
 
         except Exception as e:
             db.rollback()
@@ -119,10 +113,9 @@ def add_peer(public_key, ip_address):
 def generate_client_config(feature, private_key, ip_address):
     SCRIPT_PATH = os.path.join(os.path.dirname(__file__), '../scripts/generate_client_config.py')
     SCRIPT_PATH = os.path.abspath(SCRIPT_PATH)
-    flash(f"{sys.executable}{SCRIPT_PATH}", "info")
     cmd = ['sudo','-n','/opt/wgmanager/venv/bin/python3', SCRIPT_PATH, feature, private_key, ip_address]
 
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode != 0:
         raise RuntimeError(f"Generate config failed: {result.stderr.strip()}")
-    return result.stdout.strip()
+    

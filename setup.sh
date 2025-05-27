@@ -110,7 +110,7 @@ EOF
 setup_sudoers() {
     info "配置 sudo 权限，允许 www-data 无密码运行 script..."
 
-    echo "www-data ALL=(ALL) NOPASSWD: /opt/wgmanager/venv/bin/python $SCRIPTS_DIR*" > "$SUDOERS_FILE"
+    echo "www-data ALL=(ALL) NOPASSWD: /opt/wgmanager/venv/bin/python3 $SCRIPTS_DIR*" > "$SUDOERS_FILE"
     chmod 440 "$SUDOERS_FILE"
     info "sudoers 配置已写入 $SUDOERS_FILE"
 }

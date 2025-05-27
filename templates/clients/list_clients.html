@@ -36,7 +36,13 @@
               下载
             </a>
           </td>
-          <td>{{ client.created_by }}</td>
+          <td class="text-center">
+              {% if session['role'] == 'admin' %}
+                <a href="{{ url_for('users.edit_user', user_id=client['id']) }}" class="btn btn-warning btn-sm">
+                  修改
+                </a>
+              {% endif %}
+          </td>
         </tr>
         {% else %}
         <tr>
