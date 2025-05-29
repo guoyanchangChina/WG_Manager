@@ -22,8 +22,22 @@ check_root() {
 }
 
 install_dependencies() {
-    info "安装环境依赖..."
+    info "备份原有 sources.list"
+    cp /etc/apt/sources.list /etc/apt/sources.list.bak.$(date +%F-%T)
+
+    info "替换为清华镜像源..."
+    UBUNTU_CODENAME=$(lsb_release -cs)
+    cat > /etc/apt/sources.list <<EOF
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ $UBUNTU_CODENAME main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ $UBUNTU_CODENAME-updates main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ $UBUNTU_CODENAME-backports main restricted universe multiverse
+deb https://mirrors.tuna.tsinghua.edu.cn/ubuntu/ $UBUNTU_CODENAME-security main restricted universe multiverse
+EOF
+
+    info "更新 apt 缓存..."
     apt update
+
+    info "安装环境依赖..."
     apt install -y git python3 python3-pip python3-venv nginx wireguard gunicorn3
 }
 
