@@ -9,6 +9,7 @@ NGINX_LINK="/etc/nginx/sites-enabled/wgmanager"
 SOCK_PATH="/run/wgmanager/wgmanager.sock"
 SUDOERS_FILE="/etc/sudoers.d/wgmanager"
 SCRIPTS_DIR="$PROJECT_DIR/app/scripts"
+ENV_FILE="$PROJECT_DIR/.env"
 
 info() {
     echo "[INFO] $1"
