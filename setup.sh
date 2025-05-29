@@ -40,7 +40,7 @@ setup_project() {
     info "从 GitHub 克隆项目..."
 
     if [ -d "$PROJECT_DIR" ]; then
-        INFO "项目目录已存在，清理旧目录..."
+        info "项目目录已存在，清理旧目录..."
         rm -rf "$PROJECT_DIR"
     fi
 
