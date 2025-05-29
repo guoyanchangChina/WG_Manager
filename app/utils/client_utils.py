@@ -10,37 +10,51 @@ import os
 def generate_feature():
     return uuid.uuid4().hex[:10]
 
-def generate_ip_address():
-    net = ipaddress.ip_network("10.66.66.0/23")
-    reserved = {"10.66.66.1", "10.66.66.2"}
+def generate_ip_address(subnet_cidr: str):
+    net = ipaddress.ip_network(subnet_cidr, strict=False)
+    reserved = {str(net.network_address + 1)}  # e.g., 10.66.0.1
 
     db = g.db if hasattr(g, 'db') else get_db()
     cursor = db.cursor()
     cursor.execute("SELECT ip_address FROM clients")
     rows = cursor.fetchall()
-    used_ips = {row[0] for row in rows if row[0]}
+    used_ips = {row[0].split('/')[0] for row in rows if row[0]}
 
     for ip in net.hosts():
         ip_str = str(ip)
         if ip_str not in reserved and ip_str not in used_ips:
-            return ip_str
+            return f"{ip_str}/32"  # <-- Force /32 for client
 
     raise Exception("No available IP addresses.")
 
-def insert_with_retry(client_name, max_attempts=5):
+def insert_with_retry(client_name, net_work, max_attempts=5):
     db = get_db()
     cursor = db.cursor()
+    
+    cursor.execute("SELECT ip_address FROM interfaces WHERE name = ?", (net_work,))
+    row = cursor.fetchone()
+    if not row:
+         raise Exception("未找到指定网络")
 
+    subnet_cidr = row[0]  # e.g. '10.66.0.0/22'
     for _ in range(max_attempts):
         feature = generate_feature()
 
-        ip_address = generate_ip_address()
+        ip_address = generate_ip_address(subnet_cidr)
 
         try:
             cursor.execute("""
-                INSERT INTO clients (name, feature, ip_address, private_key, public_key, created_by)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (client_name, feature, ip_address, 'temp_private','temp_public',current_user.username))  
+                INSERT INTO clients (name, feature, ip_address, net_work, private_key, public_key, created_by)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (
+                client_name,
+                feature,
+                ip_address,
+                net_work,
+                'temp_private',
+                'temp_public',
+                current_user.username
+            ))  
             db.commit()
             client_id = cursor.lastrowid
             return {

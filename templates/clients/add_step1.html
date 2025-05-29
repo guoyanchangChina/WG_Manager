@@ -7,7 +7,7 @@
   <div class="col-md-6">
     <div class="card shadow-sm ">
       <div class="card-header justify-content-center d-flex align-items-center ">
-        <h5 class="mb-0">{{ title or '添加客户端??' }}</h5>
+        <h5 class="mb-0">{{ title or '添加客户端' }}</h5>
       </div>
       <div class="card-body">
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -31,6 +31,10 @@
             {% if form.name.errors %}
               <div class="text-danger small">{{ form.name.errors[0] }}</div>
             {% endif %}
+          </div>
+          <div class="mb-3">
+            {{form.net_work.label(class="form-label")}}
+            {{form.net_work(class="form-select", placeholder="请选择一个网络") }}
           </div>
           <div class=" d-flex justify-content-end align-items-center gap-2 "> 
             {{ form.submit(class="btn btn-primary") }}

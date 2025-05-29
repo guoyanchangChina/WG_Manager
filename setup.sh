@@ -40,6 +40,7 @@ setup_project() {
     info "从 GitHub 克隆项目..."
 
     if [ -d "$PROJECT_DIR" ]; then
+        INFO "项目目录已存在，清理旧目录..."
         rm -rf "$PROJECT_DIR"
     fi
 
@@ -61,27 +62,29 @@ initialize_database() {
 }
 
 create_env_file() {
-    ENV_FILE="$PROJECT_DIR/.env"
-    if [ -f "$ENV_FILE" ]; then
-        info ".env 文件已存在，跳过创建"
-        return
-    fi
+    info "初始化环境变量..."
 
-    info "创建默认 .env 文件..."
+    SERVER_SECRET_KEY=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+    WTF_CSRF_SECRET_KEY=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+
+    SERVER_PRIVATE_KEY=$(wg genkey)
+    SERVER_PUBLIC_KEY=$(echo "$SERVER_PRIVATE_KEY" | wg pubkey)
 
     cat > "$ENV_FILE" <<EOF
 # 环境变量配置
-SERVER_PUBLIC_KEY=your_server_public_key_here
-SERVER_ENDPOINT=your_server_ip_or_domain:51820
-CONFIG_OUTPUT_DIR=$PROJECT_DIR/client-configs
+SERVER_PRIVATE_KEY="$SERVER_PRIVATE_KEY"
+SERVER_PUBLIC_KEY="$SERVER_PUBLIC_KEY"
+WTF_CSRF_SECRET_KEY="$WTF_CSRF_SECRET_KEY"
+SERVER_SECRET_KEY="$SERVER_SECRET_KEY"
+CONFIG_OUTPUT_DIR="$(realpath "$PROJECT_DIR/client-configs")"
 EOF
 
     chown www-data:www-data "$ENV_FILE"
-    info ".env 文件已创建于 $ENV_FILE."
+    info "环境变量配置成功！"
 }
 
 setup_nginx() {
-    info "配置 Nginx 反向代理..."
+    info "初始化 Nginx 反向代理..."
     cat > "$NGINX_CONF" <<EOF
 server {
     listen 80;
@@ -108,7 +111,7 @@ EOF
 }
 
 setup_sudoers() {
-    info "配置 sudo 权限，允许 www-data 无密码运行 script..."
+    info "配置用户权限，允许执行服务器脚本..."
 
     echo "www-data ALL=(ALL) NOPASSWD: /opt/wgmanager/venv/bin/python3 $SCRIPTS_DIR*" > "$SUDOERS_FILE"
     chmod 440 "$SUDOERS_FILE"

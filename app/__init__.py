@@ -18,7 +18,7 @@ login_manager.user_loader(get_user_by_id)
 
 def create_app():
     app = Flask(__name__,template_folder='../templates',static_folder='../static')
-    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY','testkkk')
+    app.config['SECRET_KEY'] = os.getenv('SERVER_SECRET_KEY','testkkk')
     app.config['WTF_CSRF_SECRET_KEY'] = os.getenv('WTF_CSRF_SECRET_KEY','testkkk')
     app.config['DATABASE'] = 'instance/xlyvpn.db'
 
@@ -28,7 +28,10 @@ def create_app():
     app.teardown_appcontext(close_db)
     @app.before_request
     def check_login():
-        allowed_endpoints = ['auth.login', 'static'] 
+        app.logger.info(f"Before request: endpoint={request.endpoint}")
+        if request.endpoint is None:
+           return
+        allowed_endpoints = ['auth.login','static'] 
         if (
             request.endpoint not in allowed_endpoints  
             and not current_user.is_authenticated  

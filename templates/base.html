@@ -14,7 +14,7 @@
           <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.dashboard') }}">主页</a></li>
           <li class="nav-item"><a class="nav-link" href="{{url_for('users.list_users')}}">用户管理</a></li>
           <li class="nav-item"><a class="nav-link" href="{{url_for('clients.list_clients')}}">客户端管理</a></li>
-          <li class="nav-item"><a class="nav-link" href="#">系统设置</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{url_for('system.show_settings')}}">系统设置</a></li>
           <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">退出登录</a></li>
         </ul>  
       </div>

@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request,
 from flask_login import login_user, logout_user, login_required
 from ..forms import LoginForm
 from ..user_loader import get_user_by_username, User
-
+import os
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -31,4 +31,6 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
+
+
 

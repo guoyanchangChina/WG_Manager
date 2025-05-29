@@ -30,12 +30,17 @@ def list_clients():
 @clients_manager_bp.route('clients/add_clien_step1', methods=['GET','POST'])
 def add_client_step1():
     form = AddClientForm()
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT name FROM interfaces")
+    interfaces = cursor.fetchall()
+    form.net_work.choices = [(row['name']) for row in interfaces]
 
     if form.validate_on_submit():
         client_name = form.name.data  
-
+        net_work = form.net_work.data
         try:
-            result = insert_with_retry(client_name)
+            result = insert_with_retry(client_name,net_work)
             return redirect(url_for('clients.add_client_step2', client_id=result['id']))
         except Exception as e:
             flash(f"出错了: {str(e)}", "danger")

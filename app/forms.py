@@ -1,9 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField,SelectField
-from wtforms.validators import DataRequired,Length,EqualTo,IPAddress
+from wtforms.validators import DataRequired,Length,EqualTo
 from wtforms import ValidationError
 from .db import get_db
-
 class LoginForm(FlaskForm):
     username = StringField('用户名', validators=[DataRequired()], render_kw={"class": "form-control", "placeholder": "Enter your username"})
     password = PasswordField('密码', validators=[DataRequired()], render_kw={"class": "form-control", "placeholder": "Enter your password"})
@@ -45,8 +44,25 @@ class AddClientForm(FlaskForm):
     name = StringField('客户端名称', validators=[
         DataRequired(message="必须输入一个名称！"),
         Length(max=64)],        )
-    
+    net_work = SelectField('所属网络', validators=[
+        DataRequired(message="请选择所属网络")
+    ])
     submit = SubmitField('下一步')
 
+class AddInterfaceForm(FlaskForm):
+    interface_name = StringField('接口名称', validators=[DataRequired(message="接口名称不能为空")])
+    address = SelectField(
+        'Address Pool',
+        choices=[
+            ('24', '小型（/24）- 支持约 255 客户端'),
+            ('23', '中型（/23）- 支持约 510 客户端'),
+            ('22', '大型（/22）- 支持约 1022 客户端'),
+            ('21', '超大型（/21）- 支持约 2046 客户端'),
+        ]
+    )
+    submit = SubmitField('添加')
 class EmptyForm(FlaskForm):
     pass
+
+
+    
