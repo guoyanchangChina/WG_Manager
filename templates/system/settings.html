@@ -10,7 +10,7 @@
   <div class="card mb-4">
     <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">虚拟网络列表</h5>
-            <a href="{{ url_for('system.add_interface') }}" class="btn btn-sm btn-primary">
+            <a href="{{ url_for('system.add_net_work') }}" class="btn btn-sm btn-primary">
                 <i class="bi bi-plus-lg"></i> 添加虚拟网络
             </a>
         </div>
@@ -20,18 +20,20 @@
         <thead class="table-light">
           <tr>
             <th>名称</th>
-            <th>网关地址</th>
+            <th>网段</th>
             <th>监听端口</th>
+            <th>创建时间</th>
             <th>创建人</th>
           </tr>
         </thead>
         <tbody>
           {% for iface in interfaces %}
           <tr>
-            <td>{{ iface.interface_name }}</td>
-            <td>{{ iface.address }}</td>
+            <td>{{ iface.name }}</td>
+            <td>{{ iface.ip_address }}</td>
             <td>{{ iface.listen_port or '-' }}</td>
             <td>{{ iface.created_at }}</td>
+            <td>{{ iface.created_by }}</td>
           </tr>
           {% endfor %}
         </tbody>

@@ -1,0 +1,105 @@
+{% extends 'base.html' %} {% block title %}系统设置 - XLY VPN 管理后台{%
+endblock %} {% block content %}
+<div class="container mt-4 justify-content-center d-flex align-items-center">
+  <div class="col-md-6">
+    <div class="card mb-4">
+      <div class="card-header justify-content-center d-flex align-items-center">
+        <h5 class="mb-0"><strong>添加虚拟网络</strong></h5>
+      </div>
+      <div class="card-body">
+        <form method="POST" action="{{ url_for('system.add_net_work') }}">
+          {{ form.hidden_tag() }}
+
+          <!-- 接口名称 -->
+          <div class="mb-3">
+            <label for="interface_name" class="form-label">
+              <strong>虚拟网络名称</strong>
+              <small class="text-danger ms-2">仅支持英文+数字，例如 VPN0</small>
+            </label>
+            {{ form.interface_name(class="form-control",
+            placeholder="仅支持英文+数字，例如 VPN0") }} {% for error in
+            form.interface_name.errors %}
+            <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- 地址池 -->
+          <div class="mb-3">
+            <label for="address" class="form-label"
+              ><strong>划分 IP 地址池</strong></label
+            >
+            {{ form.address(class="form-select") }}
+          </div>
+
+          <div class="mb-3 row">
+            <!-- 左边：服务器 IP -->
+            <div class="col-md-6">
+              <label for="server_ip" class="form-label"
+                ><strong>服务器IP地址</strong></label
+              >
+              {{ form.server_ip(class="form-control", id="server_ip") }} {% for
+              error in form.server_ip.errors %}
+              <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <!-- 右边：使用域名 + 域名输入 -->
+            <div class="col-md-6">
+              <div class="form-check mb-2">
+                {{ form.use_domain(class="form-check-input", id="use_domain") }}
+                <label class="form-check-label" for="use_domain"
+                  ><strong>使用域名</strong></label
+                >
+              </div>
+              {{ form.domain(class="form-control", id="domain") }} {% for error
+              in form.domain.errors %}
+              <div class="text-danger small">{{ error }}</div>
+              {% endfor %}
+            </div>
+          </div>
+          <!-- DNS -->
+          <div class="mb-3">
+            <label for="DNS" class="form-label"
+              ><strong>DNS服务器</strong></label
+            >
+            {{ form.DNS(class="form-control") }} {% for error in form.DNS.errors
+            %}
+            <div class="text-danger small">{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- 按钮 -->
+          <div class="d-flex justify-content-end align-items-center gap-2">
+            {{ form.submit(class="btn btn-primary") }}
+            <a
+              href="{{ url_for('system.show_settings') }}"
+              class="btn btn-primary"
+              >返回</a
+            >
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const useDomainCheckbox = document.getElementById("use_domain");
+  const serverIpInput = document.getElementById("server_ip");
+  const domainInput = document.getElementById("domain");
+
+  function toggleInputs() {
+    if (useDomainCheckbox.checked) {
+      serverIpInput.disabled = true;
+      domainInput.disabled = false;
+    } else {
+      serverIpInput.disabled = false;
+      domainInput.disabled = true;
+    }
+  }
+
+  useDomainCheckbox.addEventListener("change", toggleInputs);
+
+  window.addEventListener("DOMContentLoaded", toggleInputs);
+</script>
+{% endblock %}

@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField,SelectField
-from wtforms.validators import DataRequired,Length,EqualTo
-from wtforms import ValidationError
+from wtforms.validators import DataRequired,Length,EqualTo,IPAddress,Regexp
+from wtforms import ValidationError,BooleanField
 from .db import get_db
+import ipaddress,re
 class LoginForm(FlaskForm):
     username = StringField('用户名', validators=[DataRequired()], render_kw={"class": "form-control", "placeholder": "Enter your username"})
     password = PasswordField('密码', validators=[DataRequired()], render_kw={"class": "form-control", "placeholder": "Enter your password"})
@@ -50,17 +51,66 @@ class AddClientForm(FlaskForm):
     submit = SubmitField('下一步')
 
 class AddInterfaceForm(FlaskForm):
-    interface_name = StringField('接口名称', validators=[DataRequired(message="接口名称不能为空")])
+    interface_name = StringField(
+        '接口名称',
+        validators=[
+            DataRequired(message="接口名称不能为空"),
+            Regexp(r'^[a-zA-Z0-9_-]{1,15}$', message="只能包含字母、数字、下划线、短横线，且长度不超过15个字符")
+        ]
+    )
+
     address = SelectField(
         'Address Pool',
         choices=[
-            ('24', '小型（/24）- 支持约 255 客户端'),
-            ('23', '中型（/23）- 支持约 510 客户端'),
-            ('22', '大型（/22）- 支持约 1022 客户端'),
-            ('21', '超大型（/21）- 支持约 2046 客户端'),
+            ('24', '小型 - 支持约 255 客户端'),
+            ('23', '中型 - 支持约 510 客户端'),
+            ('22', '大型 - 支持约 1022 客户端'),
+            ('21', '巨型 - 支持约 2046 客户端'),
         ]
     )
+
+    server_ip = StringField('服务器IP地址')  
+
+    use_domain = BooleanField('使用域名')
+
+    domain = StringField('域名', validators=[
+        Length(max=255, message="域名长度不能超过255个字符")
+    ])
+
+    DNS = StringField('DNS服务器', default='8.8.8.8', validators=[
+        DataRequired(message="DNS服务器不能为空"),
+        IPAddress(ipv4=True, message="请输入有效的IPv4地址")
+    ])
+
     submit = SubmitField('添加')
+
+    def validate_domain(self, field):
+     if self.use_domain.data:
+         if not field.data or field.data.strip() == '':
+             raise ValidationError("选择使用域名时，域名不能为空")
+        
+         domain_pattern = re.compile(
+             r'^(?=.{1,255}$)([a-zA-Z0-9][-a-zA-Z0-9]{0,62}\.)+[a-zA-Z]{2,63}$'
+         )
+         if not domain_pattern.match(field.data.strip()):
+             raise ValidationError("请输入有效的域名，例如 example.com")
+
+    def validate_server_ip(self, field):
+        if not self.use_domain.data:
+            if not field.data or field.data.strip() == '':
+                raise ValidationError("请输入服务器IP地址，或使用域名。")
+            try:
+                ipaddress.IPv4Address(field.data)
+            except ValueError:
+                raise ValidationError("请输入有效的IPv4地址")
+class PasswordResetForm(FlaskForm):
+    new_password = PasswordField("新密码", validators=[
+        DataRequired(), Length(min=8)
+    ])
+    confirm_password = PasswordField("确认新密码", validators=[
+        DataRequired(), EqualTo('new_password', message="两次输入的密码必须一致.")
+    ])
+    submit = SubmitField("重置密码") 
 class EmptyForm(FlaskForm):
     pass
 

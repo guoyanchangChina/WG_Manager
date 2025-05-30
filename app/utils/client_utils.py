@@ -25,7 +25,7 @@ def generate_ip_address(subnet_cidr: str):
         if ip_str not in reserved and ip_str not in used_ips:
             return f"{ip_str}/32"  # <-- Force /32 for client
 
-    raise Exception("No available IP addresses.")
+    raise Exception("IP地址池耗尽，没有可用IP。")
 
 def insert_with_retry(client_name, net_work, max_attempts=5):
     db = get_db()
@@ -36,16 +36,19 @@ def insert_with_retry(client_name, net_work, max_attempts=5):
     if not row:
          raise Exception("未找到指定网络")
 
-    subnet_cidr = row[0]  # e.g. '10.66.0.0/22'
+    subnet_cidr = row[0] 
+    allowed_ips = subnet_cidr 
+    print(f"Subnet CIDR: {subnet_cidr}, Allowed IPs: {allowed_ips}")
+    
     for _ in range(max_attempts):
         feature = generate_feature()
 
         ip_address = generate_ip_address(subnet_cidr)
-
+        
         try:
             cursor.execute("""
-                INSERT INTO clients (name, feature, ip_address, net_work, private_key, public_key, created_by)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO clients (name, feature, ip_address, net_work, private_key, public_key, allowed_ips, created_by)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 client_name,
                 feature,
@@ -53,6 +56,7 @@ def insert_with_retry(client_name, net_work, max_attempts=5):
                 net_work,
                 'temp_private',
                 'temp_public',
+                allowed_ips,
                 current_user.username
             ))  
             db.commit()
@@ -71,7 +75,7 @@ def insert_with_retry(client_name, net_work, max_attempts=5):
             print(f"[Insert Attempt {_+1}] Unexpected Error: {e}")
             traceback.print_exc()
 
-    raise Exception("服务器繁忙，请稍后再试。")
+    raise Exception("写入数据库失败 at insert_with_retry（） 。")
 
 def generate_keys():
     try:

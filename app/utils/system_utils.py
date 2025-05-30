@@ -6,7 +6,7 @@ import ipaddress
 def get_next_available_port(start_port=51820, max_port=51900):
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT listen_port FROM interfaces")
+    cursor.execute("SELECT listen_port FROM net_works")
     used_ports = {row["listen_port"] for row in cursor.fetchall()}
 
     for port in range(start_port, max_port):
@@ -25,10 +25,10 @@ def get_next_available_subnet(prefix_len: int) -> str:
     used_subnets = set()
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT ip_address FROM interfaces")
+    cursor.execute("SELECT ip_pool FROM net_works")
     for row in cursor.fetchall():
         try:
-            net = ipaddress.IPv4Interface(row["ip_address"]).network
+            net = ipaddress.IPv4Interface(row["ip_pool"]).network
             used_subnets.add(net)
         except ValueError:
             continue  

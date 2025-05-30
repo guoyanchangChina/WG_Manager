@@ -28,7 +28,6 @@ def create_app():
     app.teardown_appcontext(close_db)
     @app.before_request
     def check_login():
-        app.logger.info(f"Before request: endpoint={request.endpoint}")
         if request.endpoint is None:
            return
         allowed_endpoints = ['auth.login','static'] 

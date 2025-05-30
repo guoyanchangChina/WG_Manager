@@ -10,6 +10,8 @@ SOCK_PATH="/run/wgmanager/wgmanager.sock"
 SUDOERS_FILE="/etc/sudoers.d/wgmanager"
 SCRIPTS_DIR="$PROJECT_DIR/app/scripts"
 ENV_FILE="$PROJECT_DIR/.env"
+DEFAULT_USER="admin"
+DEFAULT_PASSWORD="admin123"
 
 info() {
     echo "[INFO] $1"
@@ -173,6 +175,7 @@ main() {
     info "🎉 WGManager 安装完成！"   
     PUBLIC_IP=$(curl -s ifconfig.me)
     info "你可以通过浏览器访问 http://$PUBLIC_IP"
+    info "默认用户名: $DEFAULT_USER, 密码: $DEFAULT_PASSWORD"
 }
 
 main

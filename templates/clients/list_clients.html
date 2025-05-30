@@ -32,7 +32,7 @@
           <td>{{ client.created_at }}</td>
           <td>{{ client.created_by }}</td>
           <td>
-            <a href="#" class="btn btn-sm btn-outline-success">
+            <a href="{{ url_for('clients.download_conf', client_id=client['id']) }}" class="btn btn-sm btn-outline-success">
               下载
             </a>
           </td>

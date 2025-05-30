@@ -8,7 +8,8 @@ class User(UserMixin):
         self.username = user_dict['username']
         self.department = user_dict['department']
         self.role = user_dict['role']
-
+        self.is_password_reset = user_dict.get('is_password_reset', False)
+        
 def get_user_by_username(username):
     db = get_db()
     cursor = db.cursor()

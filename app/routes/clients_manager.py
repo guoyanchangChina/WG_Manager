@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint,Response
 from flask import render_template, flash, redirect, url_for, request
 from ..db import get_db
 from ..forms import AddClientForm,EmptyForm
@@ -72,6 +72,7 @@ def add_client_step2():
             public_key = keys['public_key']
             feature = client['feature']
             ip_address= client['ip_address']
+            net_work = client['net_work']
             SCRIPT_PATH = os.path.join(os.path.dirname(__file__), '../scripts/generate_client_config.py')
             SCRIPT_PATH = os.path.abspath(SCRIPT_PATH)
             cmd = ['sudo','-n','/opt/wgmanager/venv/bin/python3', SCRIPT_PATH, feature, private_key, ip_address]
@@ -82,8 +83,9 @@ def add_client_step2():
                 UPDATE clients SET private_key = ?, public_key = ? WHERE id = ?
             """, (private_key, public_key, client_id))
             db.commit()
-            add_peer(public_key, client['ip_address'])
-            return redirect(url_for('clients.add_client_step3',form=form, client_id=client_id))
+            add_peer(public_key, client['ip_address'],net_work)
+            flash(f"客户端 {feature} 添加成功！", "success")
+            return redirect(url_for('main.succeed',form=form, client_id=client_id))
 
         except Exception as e:
             db.rollback()
@@ -110,17 +112,81 @@ def delete_client_db_entry():
         print(f"删除客户端 ID {client_id} 时出错: {str(e)}")
     return redirect(url_for('clients.list_clients'))
 
-def add_peer(public_key, ip_address):
+@clients_manager_bp.route('clients/<client_id>/download')
+def download_conf(client_id):
+    client = get_client_from_db(client_id)
+    server = get_interface_config(client['net_work'])
+
+    conf = f"""[Interface]
+PrivateKey = {client['private_key']}
+Address = {client['ip_address']}
+DNS = 8.8.8.8
+
+[Peer]
+PublicKey = {server['public_key']}
+Endpoint = {server['ip_address']}:{server['listen_port']}
+AllowedIPs = {client['allowed_ips']}
+PersistentKeepalive = 25
+"""
+
+    return Response(
+        conf,
+        mimetype='text/plain',
+        headers={'Content-Disposition': f'attachment; filename={client['feature']}.conf'}
+    )
+
+def add_peer(public_key, ip_address, network):
     SCRIPT_PATH = os.path.join(os.path.dirname(__file__), '../scripts/add_peer.py')
     SCRIPT_PATH = os.path.abspath(SCRIPT_PATH)
     flash(f"{sys.executable}{SCRIPT_PATH}", "info")
 
-    cmd = ['sudo','-n','/opt/wgmanager/venv/bin/python3', SCRIPT_PATH,public_key, ip_address]
+    cmd = ['sudo','-n','/opt/wgmanager/venv/bin/python3', SCRIPT_PATH,public_key, ip_address, network]
     result = subprocess.run(cmd, capture_output=True, text=True)
     if result.returncode != 0:
         raise RuntimeError(f"Failed to add peer: {result.stderr}")
     return result.stdout
 
+def get_client_from_db(client_id):
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("""
+        SELECT id, name, feature, ip_address, private_key, public_key, allowed_ips, net_work
+        FROM clients
+        WHERE id = ?
+    """, (client_id,))
+    row = cursor.fetchone()
+    if not row:
+        raise Exception(f"Client with ID {client_id} not found")
+
+    return {
+        'id': row[0],
+        'name': row[1],
+        'feature': row[2],
+        'ip_address': row[3],
+        'private_key': row[4],
+        'public_key': row[5],
+        'allowed_ips': row[6],
+        'net_work': row[7]
+    }
+  
+def get_interface_config(net_work):
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("""
+        SELECT name, ip_address, public_key, listen_port
+        FROM interfaces
+        WHERE name = ?
+    """, (net_work,))
+    row = cursor.fetchone()
+    if not row:
+        raise Exception(f"Interface {net_work} not found")
+
+    return {
+        'name': row[0],
+        'ip_address': row[1],
+        'public_key': row[2],
+        'listen_port': row[3]
+    }        
 
     
     

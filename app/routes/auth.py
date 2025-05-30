@@ -18,8 +18,12 @@ def login():
         if user_data and bcrypt.check_password_hash(user_data['password_hash'], form.password.data):
             session['username'] = user_data['username']
             session['role'] = user_data['role'] 
+            session['user_id'] = user_data['id']
             user = User(user_data)
             login_user(user)
+            if not user.is_password_reset:
+                flash('检测到您使用的是初始密码，请先重置密码！', 'warning')
+                return redirect(url_for('users.reset_password', user_id=user.id))
             return redirect(url_for('dashboard.dashboard'))
         else:
             flash('错误的用户名或密码', 'danger')
