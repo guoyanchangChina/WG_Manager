@@ -32,9 +32,9 @@ def add_client_step1():
     form = AddClientForm()
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT name FROM interfaces")
-    interfaces = cursor.fetchall()
-    form.net_work.choices = [(row['name']) for row in interfaces]
+    cursor.execute("SELECT name FROM net_works")
+    net_works = cursor.fetchall()
+    form.net_work.choices = [(row['name']) for row in net_works]
 
     if form.validate_on_submit():
         client_name = form.name.data  
@@ -174,7 +174,7 @@ def get_interface_config(net_work):
     cursor = db.cursor()
     cursor.execute("""
         SELECT name, ip_address, public_key, listen_port
-        FROM interfaces
+        FROM net_works
         WHERE name = ?
     """, (net_work,))
     row = cursor.fetchone()
