@@ -31,7 +31,7 @@ def insert_with_retry(client_name, net_work, max_attempts=5):
     db = get_db()
     cursor = db.cursor()
     
-    cursor.execute("SELECT ip_address FROM interfaces WHERE name = ?", (net_work,))
+    cursor.execute("SELECT ip_pool FROM net_works WHERE name = ?", (net_work,))
     row = cursor.fetchone()
     if not row:
          raise Exception("未找到指定网络")
@@ -39,7 +39,7 @@ def insert_with_retry(client_name, net_work, max_attempts=5):
     subnet_cidr = row[0] 
     allowed_ips = subnet_cidr 
     print(f"Subnet CIDR: {subnet_cidr}, Allowed IPs: {allowed_ips}")
-    
+
     for _ in range(max_attempts):
         feature = generate_feature()
 
