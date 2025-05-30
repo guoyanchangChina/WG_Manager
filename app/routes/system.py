@@ -46,7 +46,7 @@ def add_net_work():
             return redirect(url_for('main.error'))
         cursor.execute("""
             INSERT INTO net_works (name, ip_pool, gate_way, server_ip, private_key, public_key, listen_port, created_by)
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             interface_name,
             ip_pool,
