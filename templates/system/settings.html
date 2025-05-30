@@ -15,7 +15,7 @@
             </a>
         </div>
     <div class="card-body p-0">
-      {% if interfaces %}
+      {% if net_works %}
       <table class="table table-hover mb-0">
         <thead class="table-light">
           <tr>
@@ -27,7 +27,7 @@
           </tr>
         </thead>
         <tbody>
-          {% for iface in interfaces %}
+          {% for iface in net_works %}
           <tr>
             <td>{{ iface.name }}</td>
             <td>{{ iface.ip_address }}</td>
