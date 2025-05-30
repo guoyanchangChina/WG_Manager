@@ -58,7 +58,7 @@ def add_net_work():
             created_by 
             ))
         db.commit()
-        return redirect(url_for('system.settings'))
+        return redirect(url_for('system.show_settings'))
      except Exception as e:
         flash(f"添加虚拟网络出错: {str(e)}", "danger")
         return redirect(url_for('main.error'))
