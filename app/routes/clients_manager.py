@@ -173,7 +173,7 @@ def get_interface_config(net_work):
     db = get_db()
     cursor = db.cursor()
     cursor.execute("""
-        SELECT name, ip_address, public_key, listen_port
+        SELECT name, ip_pool, public_key, listen_port
         FROM net_works
         WHERE name = ?
     """, (net_work,))
