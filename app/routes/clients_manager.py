@@ -124,7 +124,7 @@ DNS = 8.8.8.8
 
 [Peer]
 PublicKey = {server['public_key']}
-Endpoint = {server['ip_address']}:{server['listen_port']}
+Endpoint = {server['server_ip']}:{server['listen_port']}
 AllowedIPs = {client['allowed_ips']}
 PersistentKeepalive = 25
 """
@@ -173,7 +173,7 @@ def get_interface_config(net_work):
     db = get_db()
     cursor = db.cursor()
     cursor.execute("""
-        SELECT name, ip_pool, public_key, listen_port
+        SELECT name, server_ip, public_key, listen_port
         FROM net_works
         WHERE name = ?
     """, (net_work,))
@@ -183,7 +183,7 @@ def get_interface_config(net_work):
 
     return {
         'name': row[0],
-        'ip_address': row[1],
+        'server_ip': row[1],
         'public_key': row[2],
         'listen_port': row[3]
     }        
