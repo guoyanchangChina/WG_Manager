@@ -11,7 +11,7 @@ def add_peer(public_key, ip_address,network):
         with open(server_config_path, 'a') as f:
             f.write("\n[Peer]\n")
             f.write(f"PublicKey = {public_key}\n")
-            f.write(f"AllowedIPs = {ip_address}/32\n")
+            f.write(f"AllowedIPs = {ip_address}\n")
     except Exception as e:
         print(f"Error updating WireGuard config: {e}", file=sys.stderr)
         sys.exit(1)
