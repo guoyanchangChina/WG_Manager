@@ -32,7 +32,7 @@ def add_net_work():
         created_by = current_user.username
         SCRIPT_PATH = os.path.join(os.path.dirname(__file__), '../scripts/add_net_work.py')
         SCRIPT_PATH = os.path.abspath(SCRIPT_PATH)
-        cmd = ['sudo','-n','/opt/wgmanager/venv/bin/python3', SCRIPT_PATH, interface_name, ip_pool, str(listen_port)]
+        cmd = ['sudo','-n','/opt/wgmanager/venv/bin/python3', SCRIPT_PATH, interface_name, gate_way, str(listen_port)]
         result = subprocess.run(cmd, capture_output=True, text=True)
 
         if result.returncode != 0:
