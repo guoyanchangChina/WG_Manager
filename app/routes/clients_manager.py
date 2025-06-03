@@ -117,23 +117,30 @@ def download_conf(client_id):
     client = get_client_from_db(client_id)
     server = get_interface_config(client['net_work'])
 
-    conf = f"""[Interface]
-PrivateKey = {client['private_key']}
-Address = {client['ip_address']}
-DNS = 8.8.8.8
-
-[Peer]
-PublicKey = {server['public_key']}
-Endpoint = {server['server_ip']}:{server['listen_port']}
-AllowedIPs = {client['allowed_ips']}
-PersistentKeepalive = 25
-"""
+    conf = "\n".join([
+        "[Interface]",
+        f"PrivateKey = {client['private_key']}",
+        f"Address = {client['ip_address']}",
+        "DNS = 8.8.8.8",
+        "",
+        "[Peer]",
+        f"PublicKey = {server['public_key']}",
+        f"Endpoint = {server['server_ip']}:{server['listen_port']}",
+        f"AllowedIPs = {client['allowed_ips']}",
+        "PersistentKeepalive = 25",
+    ])
 
     return Response(
         conf,
         mimetype='text/plain',
-        headers={'Content-Disposition': f'attachment; filename={client['feature']}.conf'}
+        headers={
+            'Content-Disposition': f'attachment; filename={client["feature"]}.conf'
+        }
     )
+
+@clients_manager_bp.route('clients/<client_id>/edit_client', methods=['GET', 'POST'])
+def edit_client(client_id):
+    pass
 
 def add_peer(public_key, ip_address, network):
     SCRIPT_PATH = os.path.join(os.path.dirname(__file__), '../scripts/add_peer.py')

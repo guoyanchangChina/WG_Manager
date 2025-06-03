@@ -17,9 +17,11 @@
     <div class="card-body p-0">
       {% if net_works %}
       <table class="table table-hover mb-0">
-        <thead class="table-light">
+        <thead class="table-dark" >
           <tr>
             <th>名称</th>
+            <th>服务器IP</th>
+            <th>网关</th>
             <th>网段</th>
             <th>监听端口</th>
             <th>创建时间</th>
@@ -30,7 +32,9 @@
           {% for iface in net_works %}
           <tr>
             <td>{{ iface.name }}</td>
-            <td>{{ iface.ip_address }}</td>
+            <td>{{ iface.server_ip }}</td>
+            <td>{{ iface.gate_way }}</td>
+            <td>{{ iface.ip_pool }}</td>
             <td>{{ iface.listen_port or '-' }}</td>
             <td>{{ iface.created_at }}</td>
             <td>{{ iface.created_by }}</td>

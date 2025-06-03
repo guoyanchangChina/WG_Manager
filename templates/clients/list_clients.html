@@ -9,8 +9,8 @@
     <a href="{{ url_for('clients.add_client_step1') }}" class="btn btn-sm btn-primary">添加客户端</a>
   </div>
   <div class="card-body p-0">
-    <table class="table table-hover mb-0">
-      <thead class="table-dark">
+    <table class="table table-hover mb-10" >
+      <thead class="table-dark " >
         <tr>
           <th scope="col">序号</th>
           <th scope="col">客户端名称</th>
@@ -38,7 +38,7 @@
           </td>
           <td class="text-center">
               {% if session['role'] == 'admin' %}
-                <a href="{{ url_for('users.edit_user', user_id=client['id']) }}" class="btn btn-warning btn-sm">
+                <a href="{{ url_for('clients.edit_client', client_id=client['id']) }}" class="btn btn-warning btn-sm">
                   修改
                 </a>
               {% endif %}

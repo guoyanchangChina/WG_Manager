@@ -13,8 +13,8 @@ def show_settings():
     db = get_db()
     cursor = db.cursor()
     cursor.execute("SELECT * FROM net_works ORDER BY created_at DESC")
-    net_work = cursor.fetchall()
-    return render_template('system/settings.html', net_work=net_work)
+    net_works = cursor.fetchall()
+    return render_template('system/settings.html', net_works=net_works)
 
 @system_bp.route('/add_net_work', methods=['POST','GET'])
 def add_net_work():
