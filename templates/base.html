@@ -5,7 +5,7 @@
   <title>{% block title %}XLY VPN 管理后台{% endblock %}</title>
   <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
 </head>
-<body style="height: 100vh; background: linear-gradient(to right, #4e54c8, #8f94fb);"> 
+<body style="min-height: 100vh; display: flex; flex-direction: column; background: linear-gradient(to right, #4e54c8, #8f94fb);">
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
   <div class="container-fluid">
     <div class="d-flex align-items-center">
@@ -33,11 +33,20 @@
     </div>
   </div>
 </nav>
-<div class="container">
+<main style="flex: 1; overflow: auto;">
+  <div class="container">
     {% block content %}
     <!-- Page-specific content goes here -->
     {% endblock %}
 </div>
+</main>
+
+<footer class="text-center mt-4 mb-2 text-white">
+    <small>
+      © 2025 郭炎昌 |
+      <a href="https://beian.miit.gov.cn/" target="_blank" style="color: #ccc;">豫ICP备2025129320号-1</a>
+    </small>
+  </footer>
 <!-- Bootstrap Icons CDN for example -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
 <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>

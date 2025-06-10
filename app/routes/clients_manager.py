@@ -12,7 +12,7 @@ clients_manager_bp = Blueprint('clients', __name__,url_prefix='/clients')
 @clients_manager_bp.route('clients/list_clients', methods=['GET'])
 def list_clients():
     page = request.args.get('page', 1, type=int)
-    per_page = 15
+    per_page = 10
     offset = (page - 1) * per_page
 
     db = get_db()
