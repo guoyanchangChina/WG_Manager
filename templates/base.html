@@ -7,23 +7,39 @@
 </head>
 <body style="height: 100vh; background: linear-gradient(to right, #4e54c8, #8f94fb);"> 
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="{{ url_for('dashboard.dashboard') }}">XLY VPN</a>
-      <div class="collapse navbar-collapse justify-content-end " >
-        <ul class="navbar-nav flex-row  ">
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.dashboard') }}">主页</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{url_for('users.list_users')}}">用户管理</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{url_for('clients.list_clients')}}">客户端管理</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{url_for('system.show_settings')}}">系统设置</a></li>
-          <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">退出登录</a></li>
-        </ul>  
+  <div class="container-fluid">
+    <div class="d-flex align-items-center">
+      <!-- Icon with dropdown -->
+      <div class="dropdown me-2">
+        <a href="#" class="text-white " id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="bi bi-person-circle" style="font-size: 1.5rem;"></i>
+        </a>
+        <ul class="dropdown-menu " aria-labelledby="userDropdown">
+          <li><a class="dropdown-item" href="{{ url_for('users.reset_password') }}">Change Password</a></li>
+        </ul>
       </div>
     </div>
-  </nav>
-
-  <div class="container">
-    {% block content %}{% endblock %}
+    <a class="navbar-brand" href="{{ url_for('dashboard.dashboard') }}">
+      <h5 class="mb-0">欢迎，{{ current_user.username }}！</h5>
+    </a>
+    <div class="collapse navbar-collapse justify-content-end">
+      <ul class="navbar-nav flex-row">
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.dashboard') }}">主页</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url_for('users.list_users')}}">用户管理</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url_for('clients.list_clients')}}">客户端管理</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{url_for('system.show_settings')}}">系统设置</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">退出登录</a></li>
+      </ul>
+    </div>
   </div>
-  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+</nav>
+<div class="container">
+    {% block content %}
+    <!-- Page-specific content goes here -->
+    {% endblock %}
+</div>
+<!-- Bootstrap Icons CDN for example -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 </body>
 </html>

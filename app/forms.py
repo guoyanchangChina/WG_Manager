@@ -108,7 +108,7 @@ class PasswordResetForm(FlaskForm):
         DataRequired(), Length(min=8)
     ])
     confirm_password = PasswordField("确认新密码", validators=[
-        DataRequired(), EqualTo('new_password', message="两次输入的密码必须一致.")
+        DataRequired(), EqualTo('new_password', message="两次输入的密码不一致.")
     ])
     submit = SubmitField("重置密码") 
 class EmptyForm(FlaskForm):
